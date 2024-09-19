@@ -6,7 +6,7 @@ import { Tile } from "./Tile";
 import { AnimatePresence } from "framer-motion";
 import { sleep } from "../../utils/sleep";
 import "./game.styles.css";
-import { useWebSocket } from "../../hooks/useWebSocket";
+// import { useWebSocket } from "../../hooks/useWebSocket";
 
 interface Props {
   data: Data[];
@@ -45,7 +45,7 @@ const createCinnamonSquares = (data: Data[]) => {
 const cols = [0, 4, 8, 12];
 
 export const Game = ({ data }: Props) => {
-  useWebSocket();
+  // useWebSocket();
 
   const [cinnamonSquares, setCinnamonSquares] = useState(
     shuffle(createCinnamonSquares(data))
