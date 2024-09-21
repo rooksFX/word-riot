@@ -1,10 +1,11 @@
 "use client";
-import { useState } from 'react';
-import useGameSocket from '@/hooks/useGameSocket';
+import { useState } from "react";
+import useGameSocket from "@/hooks/useGameSocket";
 
 export const Lobby = () => {
-  const [inputCode, setInputCode] = useState('');
-  const { createGame, joinGame, gameCode, isGameStarted, error } = useGameSocket();
+  const [inputCode, setInputCode] = useState("");
+  const { createGame, joinGame, gameCode, isGameStarted, error } =
+    useGameSocket();
 
   const handleCreateGame = () => {
     const code = Math.random().toString(36).substr(2, 5).toUpperCase();
@@ -16,12 +17,12 @@ export const Lobby = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full p-4">
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
           <button
             onClick={handleCreateGame}
-            className="bg-blue-500 text-white py-2 px-4 rounded"
+            className="bg-green-500 w-full text-white py-2 px-4 rounded"
           >
             Create Game
           </button>
@@ -36,7 +37,7 @@ export const Lobby = () => {
             />
             <button
               onClick={handleJoinGame}
-              className="bg-green-500 text-white py-2 px-4 rounded"
+              className="bg-indigo-500 text-white py-2 px-4 rounded"
             >
               Join Game
             </button>
@@ -47,8 +48,9 @@ export const Lobby = () => {
       )}
 
       {gameCode && !isGameStarted && (
-        <p className="text-xl font-semibold">
-          Waiting for the second player... Game Code: {gameCode}
+        <p className="text-xl font-semibold text-white">
+          Waiting for the second player... Game Code:{" "}
+          <span className="text-amber-500">{gameCode}</span>
         </p>
       )}
 
