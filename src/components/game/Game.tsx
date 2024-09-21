@@ -10,6 +10,8 @@ import "./game.styles.css";
 
 interface Props {
   data: Data[];
+  sendAction: (data: TileData) => void;
+  opponentAction: TileData | null;
 }
 
 const createCinnamonSquares = (data: Data[]) => {
@@ -44,7 +46,7 @@ const createCinnamonSquares = (data: Data[]) => {
 
 const cols = [0, 4, 8, 12];
 
-export const Game = ({ data }: Props) => {
+export const Game = ({ data, opponentAction }: Props) => {
   // useWebSocket();
 
   const [cinnamonSquares, setCinnamonSquares] = useState(
@@ -60,6 +62,10 @@ export const Game = ({ data }: Props) => {
     console.log("data: ", data);
     console.log("cinnamonSquares: ", cinnamonSquares);
   }, []);
+
+  useEffect(() => {
+    if (opponentAction) onSelect(opponentAction);
+  }, [opponentAction]);
 
   const onSelect = (data: TileData) => {
     if (selectedWords.includes(data)) {

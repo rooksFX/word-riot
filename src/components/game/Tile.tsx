@@ -46,7 +46,7 @@ export const Tile = ({
         font-bold
         transition-colors
         hover:brightness-110
-        ${isSelected ? bgColor() : "bg-teal-400 text-zinc-100"}
+        ${isSelected ? bgColor() : "bg-indigo-500 text-zinc-100"}
         ${!isSelected && isAnimating ? "saturate-0 hover:cursor-not-allowed": ""}
       `}
       onClick={onClick}
