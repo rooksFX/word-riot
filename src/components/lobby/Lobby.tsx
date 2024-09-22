@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import useGameSocket from "@/hooks/useGameSocket";
+import { Game } from "../game/Game";
+import { data } from "../game/data";
 
 export const Lobby = () => {
   const [inputCode, setInputCode] = useState("");
-  const { createGame, joinGame, gameCode, isGameStarted, error } =
+  const { createGame, joinGame, sendAction, gameCode, isGameStarted, opponentAction, error } =
     useGameSocket();
 
   const handleCreateGame = () => {
@@ -55,11 +57,12 @@ export const Lobby = () => {
       )}
 
       {isGameStarted && (
-        <div>
-          <h2 className="text-2xl font-bold">Game Started!</h2>
-          <p className="text-gray-700">Both players are now connected.</p>
-          {/* Game UI goes here */}
-        </div>
+        // <div>
+        //   <h2 className="text-2xl font-bold">Game Started!</h2>
+        //   <p className="text-gray-700">Both players are now connected.</p>
+        //   {/* Game UI goes here */}
+        // </div>
+        <Game data={data.slice(0, 5)} sendAction={sendAction} opponentAction={opponentAction} />
       )}
     </div>
   );

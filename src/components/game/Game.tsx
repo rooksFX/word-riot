@@ -46,7 +46,7 @@ const createCinnamonSquares = (data: Data[]) => {
 
 const cols = [0, 4, 8, 12];
 
-export const Game = ({ data, opponentAction }: Props) => {
+export const Game = ({ data, sendAction, opponentAction }: Props) => {
   // useWebSocket();
 
   const [cinnamonSquares, setCinnamonSquares] = useState(
@@ -64,10 +64,16 @@ export const Game = ({ data, opponentAction }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (opponentAction) onSelect(opponentAction);
+    if (opponentAction) onSelect(opponentAction, true);
   }, [opponentAction]);
 
-  const onSelect = (data: TileData) => {
+  useEffect(() => {
+    console.log(" --------- selectedWords changed: ", selectedWords);
+  }, [selectedWords])
+
+  const onSelect = (data: TileData, fromOpponent = false) => {
+    console.log(" --------- onSelect > fromOpponent: ", fromOpponent);
+    if (!fromOpponent) sendAction(data);
     if (selectedWords.includes(data)) {
       setSelectedWords([]);
     } else {
@@ -138,6 +144,10 @@ export const Game = ({ data, opponentAction }: Props) => {
     });
   };
 
+  const isSelected = (data: TileData) => {
+    return selectedWords.some((word) => word.word === data.word);
+  }
+
   return (
     <div className="min-w-[320px] w-[500px]">
       <div className="flex flex-row gap-2">
@@ -156,8 +166,12 @@ export const Game = ({ data, opponentAction }: Props) => {
                     <Tile
                       key={cinnamon.word}
                       data={cinnamon}
+                      selectedWords={selectedWords}
                       onSelect={() => onSelect(cinnamon)}
-                      isSelected={selectedWords.includes(cinnamon)}
+                      isSelected={() => {
+                        if (cinnamon.word === "bright") console.log(" --------- bright > selectedWords.includes(cinnamon): ", selectedWords.includes(cinnamon));
+                        return isSelected(cinnamon)
+                      }}
                       result={result}
                       isAnimating={isAnimating}
                       animationEnd={() => setIsAnimating(false)}

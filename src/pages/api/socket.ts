@@ -48,6 +48,12 @@ export default function handler(req: NextApiRequest, res: ExtendedNextApiRespons
         }
       });
 
+      socket.on('opponentAction', (gameCode: string, data: any, playerNumber: 1 | 2) => {
+        console.log(" --------- opponentAction > data: ", data);
+        console.log(" --------- opponentAction > playerNumber: ", playerNumber);
+        socket.to(gameCode).emit('opponentAction', data, playerNumber);
+      });
+
       socket.on('disconnect', () => {
         console.log('Player disconnected:', socket.id);
       });
