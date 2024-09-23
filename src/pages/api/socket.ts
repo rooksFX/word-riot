@@ -55,8 +55,16 @@ export default function handler(req: NextApiRequest, res: ExtendedNextApiRespons
         socket.to(gameCode).emit('opponentAction', data, playerNumber);
       });
 
-      socket.on('disconnect', () => {
+      socket.on('leave', (gameCode: string) => {
+        console.log("Player left > socket.id:", socket.id);
+        io.socketsLeave(gameCode);
+      })
+
+      socket.on('disconnect', (gameCode: string) => {
         console.log('Player disconnected:', socket.id);
+        // const room = io.sockets.adapter.rooms.get(gameCode);
+        // io.to(gameCode).emit('');
+        socket.leave(gameCode);
       });
     });
   } else {

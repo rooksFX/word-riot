@@ -11,7 +11,7 @@ export const Lobby = () => {
     createGame,
     joinGame,
     sendAction,
-    disconnect,
+    leaveGame,
     gameCode,
     isGameStarted,
     opponentAction,
@@ -71,9 +71,10 @@ export const Lobby = () => {
       {isGameStarted && (
         <>
           <Game
-            data={data.slice(0, 5)}
+            key={gameCode}
+            data={[...data].slice(0, 5)}
             sendAction={sendAction}
-            disconnect={disconnect}
+            leaveGame={leaveGame}
             opponentAction={opponentAction}
             playerNumber={playerNumber}
             isSynonym={isSynonym}

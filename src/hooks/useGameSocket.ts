@@ -76,6 +76,14 @@ const useGameSocket = () => {
     }
   };
 
+  const leaveGame = () => {
+    if (socket) {
+      setGameCode(null);
+      setIsGameStarted(false);
+      socket.emit('leave', gameCode);
+    }
+  }
+
   const disconnect = () => {
     if (socket) {
       setGameCode(null);
@@ -90,6 +98,7 @@ const useGameSocket = () => {
     joinGame,
     sendAction,
     disconnect,
+    leaveGame,
     isGameStarted,
     opponentAction,
     playerNumber,
