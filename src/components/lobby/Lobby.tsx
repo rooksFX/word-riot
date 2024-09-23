@@ -70,8 +70,6 @@ export const Lobby = () => {
 
       {isGameStarted && (
         <>
-          <div className="text-white px-3 py-1">Player {playerNumber}</div>
-          <div className="text-white px-3 py-1">Select {isSynonym? "synonyms" : "antonyms"}</div>
           <Game
             data={data.slice(0, 5)}
             sendAction={sendAction}

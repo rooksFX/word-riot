@@ -6,7 +6,8 @@ import { Tile } from "./Tile";
 import { AnimatePresence } from "framer-motion";
 import { sleep } from "../../utils/sleep";
 import "./game.styles.css";
-// import { useWebSocket } from "../../hooks/useWebSocket";
+import { Won } from "./Won";
+import { Lose } from "./Lose";
 
 interface Props {
   data: Data[];
@@ -56,7 +57,6 @@ export const Game = ({
   opponentAction,
   isSynonym,
 }: Props) => {
-  // useWebSocket();
 
   const [cinnamonSquares, setCinnamonSquares] = useState(
     shuffle(createCinnamonSquares(data))
@@ -66,27 +66,17 @@ export const Game = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [synonymsAnswered, setSynonymsAnswered] = useState(0);
   const [antonymsAnswered, setAnyonymsAnswered] = useState(0);
+  const [isWinner, setIsWinner] = useState<boolean | null>(null);
 
   useEffect(() => {
     (async () => {
       if (antonymsAnswered + synonymsAnswered === 5) {
         console.log(" --------- Game Completed ");
         if (antonymsAnswered < synonymsAnswered) {
-          if (isSynonym) {
-            console.log(" --------- Game Completed > You won!!! ");
-          } else {
-            console.log(" --------- Game Completed > You lose!!! ");
-          }
+          isSynonym ? setIsWinner(true) : setIsWinner(false);
         } else {
-          if (isSynonym) {
-            console.log(" --------- Game Completed > You lose!!! ");
-          } else {
-            console.log(" --------- Game Completed > You won!!! ");
-          }
+          isSynonym ? setIsWinner(false) : setIsWinner(true);
         }
-        // end game
-        await sleep(1200);
-        disconnect();
       }
     })();
   }, [synonymsAnswered, antonymsAnswered]);
@@ -164,12 +154,28 @@ export const Game = ({
     });
   };
 
+  const onAnimationEnd = async () => {
+    console.log(" --------- onAnimationEnd ");
+    // end game
+    await sleep(1920);
+    disconnect();
+  }
+
   const isSelected = (data: TileData) => {
     return selectedWords.some((word) => word.word === data.word);
   };
 
+  if (isWinner === true) {
+    return (<Won onAnimationEnd={onAnimationEnd} />)
+  } else if (isWinner === false) {
+    return (<Lose onAnimationEnd={onAnimationEnd} />)
+  }
+
   return (
     <div className="min-w-[320px] w-[500px]">
+      <div className="my-2 text-white">
+        Select {isSynonym ? `synonyms! (${synonymsAnswered})` : `antonyms! (${antonymsAnswered})`}
+      </div>
       <div className="flex flex-row gap-2">
         {cols.map((col) => (
           <div key={col} className="w-[120px] h-[504px] flex flex-col gap-2">
@@ -178,7 +184,6 @@ export const Game = ({
               presenceAffectsLayout={true}
               mode="popLayout"
             >
-              {/* 0 > 4, 3 > 8, 7 > 12, 11 > 16 */}
               {cinnamonSquares.slice(col, col + 4).map((cinnamon) =>
                 !cinnamon.hidden ? (
                   <Tile
@@ -198,11 +203,6 @@ export const Game = ({
             </AnimatePresence>
           </div>
         ))}
-      </div>
-      <div className="mt-2">
-        Synonyms: {synonymsAnswered}
-        <br />
-        Antonyms: {antonymsAnswered}
       </div>
     </div>
   );
