@@ -11,6 +11,8 @@ interface ExtendedNextApiResponse extends NextApiResponse {
   socket: Socket & { server: SocketServer };
 }
 
+let games: any = {};
+
 export default function handler(req: NextApiRequest, res: ExtendedNextApiResponse) {
   if (!res.socket.server.io) {
     const io = new IOServer(res.socket.server, {
@@ -29,8 +31,9 @@ export default function handler(req: NextApiRequest, res: ExtendedNextApiRespons
       });
 
       // Create a game room
-      socket.on('createGame', (gameCode: string) => {
+      socket.on('createGame', (gameCode: string, isSynonym: boolean) => {
         socket.join(gameCode);
+        games[gameCode as string] = { gameCode: gameCode, player1: isSynonym, player2: !isSynonym };
         console.log(`Game room ${gameCode} created by ${socket.id}`);
         socket.emit('gameCreated', gameCode);
       });
@@ -41,7 +44,7 @@ export default function handler(req: NextApiRequest, res: ExtendedNextApiRespons
         if (room && room.size === 1) {
           socket.join(gameCode);
           console.log(`${socket.id} joined game room ${gameCode}`);
-          socket.emit('gameJoined', gameCode);
+          socket.emit('gameJoined', gameCode, games[gameCode as string].player2);
           io.to(gameCode).emit('startGame');  // Notify both players to start the game
         } else {
           socket.emit('error', 'Game room not available or already full');
@@ -49,8 +52,6 @@ export default function handler(req: NextApiRequest, res: ExtendedNextApiRespons
       });
 
       socket.on('opponentAction', (gameCode: string, data: any, playerNumber: 1 | 2) => {
-        console.log(" --------- opponentAction > data: ", data);
-        console.log(" --------- opponentAction > playerNumber: ", playerNumber);
         socket.to(gameCode).emit('opponentAction', data, playerNumber);
       });
 

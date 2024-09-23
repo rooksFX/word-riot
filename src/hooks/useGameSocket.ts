@@ -1,4 +1,5 @@
 import { TileData } from "@/components/game/types";
+import { random, set } from "lodash";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -10,6 +11,7 @@ const useGameSocket = () => {
   const [error, setError] = useState<string | null>(null);
   const [opponentAction, setOpponentAction] = useState<TileData | null>(null);
   const [playerNumber, setPlayerNumber] = useState<1 | 2>();
+  const [isSynonym, setIsSynonym] = useState(false);
 
   useEffect(() => {
     if (!socket) {
@@ -19,8 +21,6 @@ const useGameSocket = () => {
       });
     }
 
-    console.log(" socket: ", socket);
-
     socket.on("connect", () => {
       console.log("Connected to server: ", socket);
     });
@@ -29,7 +29,8 @@ const useGameSocket = () => {
       setGameCode(code);
     });
 
-    socket.on("gameJoined", (code: string) => {
+    socket.on("gameJoined", (code: string, isSynonymRandomized: boolean) => {
+      setIsSynonym(isSynonymRandomized);
       setGameCode(code);
     });
 
@@ -38,9 +39,7 @@ const useGameSocket = () => {
     });
 
     socket.on("opponentAction", (data: TileData, player) => {
-      console.log(" --------- opponentAction > player | playerNumber: ", player , " | ", playerNumber);
       if (player === playerNumber) return;
-      console.log(" --------- opponentAction > data: ", data);
       setOpponentAction(data);
     });
 
@@ -58,27 +57,45 @@ const useGameSocket = () => {
   const createGame = (code: string) => {
     if (socket) {
       setPlayerNumber(1);
-      console.log(" --------- playerNumber: ", 1);
-      socket.emit("createGame", code);
+      const isSynonymRandomized = random(0, 1) === 1;
+      setIsSynonym(isSynonymRandomized);
+      socket.emit("createGame", code, isSynonymRandomized);
     }
   };
 
   const joinGame = (code: string) => {
     if (socket) {
       setPlayerNumber(2);
-      console.log(" --------- playerNumber: ", 2);
       socket.emit("joinGame", code);
     }
   };
 
   const sendAction = (data: TileData) => {
     if (socket) {
-      console.log(" --------- sendAction > data: ", data);
       socket.emit("opponentAction", gameCode, data, playerNumber);
+    }
+  };
+
+  const disconnect = () => {
+    if (socket) {
+      setGameCode(null);
+      setIsGameStarted(false);
+      socket.disconnect();
     }
   }
 
-  return { gameCode, createGame, joinGame, sendAction, isGameStarted, opponentAction, error };
+  return {
+    gameCode,
+    createGame,
+    joinGame,
+    sendAction,
+    disconnect,
+    isGameStarted,
+    opponentAction,
+    playerNumber,
+    isSynonym,
+    error,
+  };
 };
 
 export default useGameSocket;

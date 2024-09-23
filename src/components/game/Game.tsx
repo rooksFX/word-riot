@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { shuffle } from "lodash";
 import { Data, TileData, SelectionResult } from "./types";
 import { useEffect, useState } from "react";
@@ -11,7 +11,10 @@ import "./game.styles.css";
 interface Props {
   data: Data[];
   sendAction: (data: TileData) => void;
+  disconnect: () => void;
   opponentAction: TileData | null;
+  playerNumber: number | undefined;
+  isSynonym: boolean;
 }
 
 const createCinnamonSquares = (data: Data[]) => {
@@ -46,7 +49,13 @@ const createCinnamonSquares = (data: Data[]) => {
 
 const cols = [0, 4, 8, 12];
 
-export const Game = ({ data, sendAction, opponentAction }: Props) => {
+export const Game = ({
+  data,
+  sendAction,
+  disconnect,
+  opponentAction,
+  isSynonym,
+}: Props) => {
   // useWebSocket();
 
   const [cinnamonSquares, setCinnamonSquares] = useState(
@@ -59,20 +68,34 @@ export const Game = ({ data, sendAction, opponentAction }: Props) => {
   const [antonymsAnswered, setAnyonymsAnswered] = useState(0);
 
   useEffect(() => {
-    console.log("data: ", data);
-    console.log("cinnamonSquares: ", cinnamonSquares);
-  }, []);
+    (async () => {
+      if (antonymsAnswered + synonymsAnswered === 5) {
+        console.log(" --------- Game Completed ");
+        if (antonymsAnswered < synonymsAnswered) {
+          if (isSynonym) {
+            console.log(" --------- Game Completed > You won!!! ");
+          } else {
+            console.log(" --------- Game Completed > You lose!!! ");
+          }
+        } else {
+          if (isSynonym) {
+            console.log(" --------- Game Completed > You lose!!! ");
+          } else {
+            console.log(" --------- Game Completed > You won!!! ");
+          }
+        }
+        // end game
+        await sleep(1200);
+        disconnect();
+      }
+    })();
+  }, [synonymsAnswered, antonymsAnswered]);
 
   useEffect(() => {
     if (opponentAction) onSelect(opponentAction, true);
   }, [opponentAction]);
 
-  useEffect(() => {
-    console.log(" --------- selectedWords changed: ", selectedWords);
-  }, [selectedWords])
-
   const onSelect = (data: TileData, fromOpponent = false) => {
-    console.log(" --------- onSelect > fromOpponent: ", fromOpponent);
     if (!fromOpponent) sendAction(data);
     if (selectedWords.includes(data)) {
       setSelectedWords([]);
@@ -127,8 +150,6 @@ export const Game = ({ data, sendAction, opponentAction }: Props) => {
 
   useEffect(() => {
     if (selectedWords.length === 2) evaluate();
-    if (selectedWords.length === 2)
-      console.log(" selectedWords: ", selectedWords);
   }, [selectedWords]);
 
   const hideWord = (words: string[]) => {
@@ -136,7 +157,6 @@ export const Game = ({ data, sendAction, opponentAction }: Props) => {
       const newCinnamonSquares = [...prev];
       newCinnamonSquares.forEach((cinnamon) => {
         if (words.includes(cinnamon.word)) {
-          console.log(" onSelect > cinnamon: ", cinnamon);
           cinnamon.hidden = true;
         }
       });
@@ -146,7 +166,7 @@ export const Game = ({ data, sendAction, opponentAction }: Props) => {
 
   const isSelected = (data: TileData) => {
     return selectedWords.some((word) => word.word === data.word);
-  }
+  };
 
   return (
     <div className="min-w-[320px] w-[500px]">
@@ -159,36 +179,25 @@ export const Game = ({ data, sendAction, opponentAction }: Props) => {
               mode="popLayout"
             >
               {/* 0 > 4, 3 > 8, 7 > 12, 11 > 16 */}
-              {cinnamonSquares
-                .slice(col, col + 4)
-                .map((cinnamon) =>
-                  !cinnamon.hidden ? (
-                    <Tile
-                      key={cinnamon.word}
-                      data={cinnamon}
-                      selectedWords={selectedWords}
-                      onSelect={() => onSelect(cinnamon)}
-                      isSelected={() => {
-                        if (cinnamon.word === "bright") console.log(" --------- bright > selectedWords.includes(cinnamon): ", selectedWords.includes(cinnamon));
-                        return isSelected(cinnamon)
-                      }}
-                      result={result}
-                      isAnimating={isAnimating}
-                      animationEnd={() => setIsAnimating(false)}
-                    />
-                  ) : null
-                )}
+              {cinnamonSquares.slice(col, col + 4).map((cinnamon) =>
+                !cinnamon.hidden ? (
+                  <Tile
+                    key={cinnamon.word}
+                    data={cinnamon}
+                    selectedWords={selectedWords}
+                    onSelect={() => onSelect(cinnamon)}
+                    isSelected={() => {
+                      return isSelected(cinnamon);
+                    }}
+                    result={result}
+                    isAnimating={isAnimating}
+                    animationEnd={() => setIsAnimating(false)}
+                  />
+                ) : null
+              )}
             </AnimatePresence>
           </div>
         ))}
-
-        {/* <AnimatePresence>
-          {cinnamonSquares.map((cinnamon) =>
-            !cinnamon.hidden ? (
-              <Square key={cinnamon.word} data={cinnamon} onSelect={() => onSelect(cinnamon.word)} />
-            ) : null
-          )}
-        </AnimatePresence> */}
       </div>
       <div className="mt-2">
         Synonyms: {synonymsAnswered}

@@ -3,14 +3,26 @@ import { useState } from "react";
 import useGameSocket from "@/hooks/useGameSocket";
 import { Game } from "../game/Game";
 import { data } from "../game/data";
+import { nanoid } from "nanoid";
 
 export const Lobby = () => {
   const [inputCode, setInputCode] = useState("");
-  const { createGame, joinGame, sendAction, gameCode, isGameStarted, opponentAction, error } =
-    useGameSocket();
+  const {
+    createGame,
+    joinGame,
+    sendAction,
+    disconnect,
+    gameCode,
+    isGameStarted,
+    opponentAction,
+    playerNumber,
+    isSynonym,
+    error,
+  } = useGameSocket();
 
   const handleCreateGame = () => {
-    const code = Math.random().toString(36).substr(2, 5).toUpperCase();
+    // const code = Math.random().toString(36).substr(2, 5).toUpperCase();
+    const code = nanoid(5).toUpperCase();
     createGame(code);
   };
 
@@ -57,12 +69,18 @@ export const Lobby = () => {
       )}
 
       {isGameStarted && (
-        // <div>
-        //   <h2 className="text-2xl font-bold">Game Started!</h2>
-        //   <p className="text-gray-700">Both players are now connected.</p>
-        //   {/* Game UI goes here */}
-        // </div>
-        <Game data={data.slice(0, 5)} sendAction={sendAction} opponentAction={opponentAction} />
+        <>
+          <div className="text-white px-3 py-1">Player {playerNumber}</div>
+          <div className="text-white px-3 py-1">Select {isSynonym? "synonyms" : "antonyms"}</div>
+          <Game
+            data={data.slice(0, 5)}
+            sendAction={sendAction}
+            disconnect={disconnect}
+            opponentAction={opponentAction}
+            playerNumber={playerNumber}
+            isSynonym={isSynonym}
+          />
+        </>
       )}
     </div>
   );
