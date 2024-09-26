@@ -4,8 +4,9 @@ import { random } from "lodash";
 
 interface Prop {
   data: TileData;
+  selectedWords: TileData[];
   onSelect: () => void;
-  isSelected: boolean;
+  isSelected: () => boolean;
   result: SelectionResult;
   isAnimating: boolean;
   animationEnd: () => void;
@@ -13,15 +14,17 @@ interface Prop {
 
 export const Tile = ({
   data,
+  selectedWords,
   onSelect,
   isSelected,
   result,
   isAnimating,
   animationEnd,
 }: Prop) => {
-  const onClick = () => {
-    onSelect();
-  };
+
+  if (data.word === "bright") console.log(" --------- Tile: bright > selectedWords.includes(data): ", selectedWords.includes(data));
+  if (data.word === "bright") console.log(" --------- Tile: bright > selectedWords[0]: ", selectedWords[0]);
+  if (data.word === "bright") console.log(" --------- Tile: bright > data: ", data);
 
   const bgColor = () => {
     switch (result) {
@@ -46,10 +49,10 @@ export const Tile = ({
         font-bold
         transition-colors
         hover:brightness-110
-        ${isSelected ? bgColor() : "bg-teal-400 text-zinc-100"}
-        ${!isSelected && isAnimating ? "saturate-0 hover:cursor-not-allowed": ""}
+        ${isSelected() ? bgColor() : "bg-indigo-500 text-zinc-100"}
+        ${!isSelected() && isAnimating ? "saturate-0 hover:cursor-not-allowed": ""}
       `}
-      onClick={onClick}
+      onClick={onSelect}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: [1.2, 0], borderRadius: ["6px", "50%"], opacity: 0 }}

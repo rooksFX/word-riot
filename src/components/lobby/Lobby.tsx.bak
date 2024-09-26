@@ -1,0 +1,86 @@
+"use client";
+import { Game } from "../game/Game";
+import { data } from "../game/data";
+import { useGameHook } from "../useGameHook";
+
+export const Lobby = () => {
+  const {
+    gameCode,
+    isGameCreated,
+    isGameJoined,
+    errorMessage,
+    playerMove,
+    opponentAction,
+    setGameCode,
+    createGame,
+    joinGame,
+    sendAction,
+  } = useGameHook();
+
+  return (
+    <div className="min-h-screen w-full flex flex-col justify-center items-center bg-gray-900 text-white">
+      <h1 className="text-4xl font-bold mb-8">WORD RIOT</h1>
+
+      {!isGameCreated && !isGameJoined && (
+        <div className="space-y-4">
+          <button
+            onClick={createGame}
+            className="bg-green-500 w-full hover:bg-green-600 text-white py-2 px-4 rounded-lg shadow-lg transition duration-200"
+          >
+            Create Game
+          </button>
+          <div className="flex flex-col space-y-2">
+            <input
+              type="text"
+              placeholder="Enter game code"
+              value={gameCode}
+              onChange={(e) => setGameCode(e.target.value)}
+              className="w-64 p-2 bg-gray-800 text-white border border-gray-700 rounded-lg"
+            />
+            <button
+              onClick={joinGame}
+              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-lg transition duration-200"
+            >
+              Join Game
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isGameCreated && (
+        <p className="text-lg my-4">
+          Game created! Share this code with a friend:
+          <span className="font-bold text-yellow-500"> {gameCode}</span>
+        </p>
+      )}
+      {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
+
+      {(isGameCreated || isGameJoined) && (
+        <><Game data={data.slice(0, 5)} sendAction={sendAction} opponentAction={opponentAction} /></>
+      )}
+
+      {/* {(isGameCreated || isGameJoined) && (
+        <div className="mt-8 space-y-4">
+          <h2 className="text-2xl font-semibold">Game is On!</h2>
+          <div className="flex space-x-4">
+            <button
+              onClick={() => sendAction("move1")}
+              className="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded-lg shadow-lg transition duration-200"
+            >
+              Do Move 1
+            </button>
+            <button
+              onClick={() => sendAction("move2")}
+              className="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded-lg shadow-lg transition duration-200"
+            >
+              Do Move 2
+            </button>
+          </div>
+          <p className="mt-4">
+            Your last move: <span className="font-bold">{playerMove}</span>
+          </p>
+        </div>
+      )} */}
+    </div>
+  );
+};
