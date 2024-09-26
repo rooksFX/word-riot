@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import io, { Socket }  from 'socket.io-client';
 import { TileData } from './game/types';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 let socket: Socket;
 
 export const useGameHook = () => {

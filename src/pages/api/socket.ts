@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { Server as HTTPServer } from 'http';
 import { Socket } from 'net';
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 interface SocketServer extends HTTPServer {
   io?: IOServer;
 }
@@ -11,7 +12,7 @@ interface ExtendedNextApiResponse extends NextApiResponse {
   socket: Socket & { server: SocketServer };
 }
 
-let games: any = {};
+const games: any = {};
 
 export default function handler(req: NextApiRequest, res: ExtendedNextApiResponse) {
   if (!res.socket.server.io) {
