@@ -1,5 +1,5 @@
 import { TileData } from "@/components/game/types";
-import { random, set } from "lodash";
+import { random } from "lodash";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
