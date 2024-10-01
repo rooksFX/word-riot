@@ -15,8 +15,11 @@ const useGameSocket = () => {
 
   useEffect(() => {
     if (!socket) {
-      socket = io({
-        path: "/api/socket",
+      // replace the URL w/ the deployed Web Sockets server
+      // or use envi variable and make the URL dynamic
+      socket = io('http://localhost:9090', {
+        // path: "/api/socket",
+        path: "/socket",
         // transports: ['polling', 'websocket'],
       });
     }
