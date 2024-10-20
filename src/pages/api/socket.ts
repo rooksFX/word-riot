@@ -17,6 +17,12 @@ const games: any = {};
 export default function handler(req: NextApiRequest, res: ExtendedNextApiResponse) {
   if (!res.socket.server.io) {
     const io = new IOServer(res.socket.server, {
+      cors: {
+        origin: '*', // Your Next.js app's origin
+        methods: ['GET', 'POST'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
+      },
       path: "/api/socket",  // Set the path explicitly
       // transports: ['polling', 'websocket'],
     });
