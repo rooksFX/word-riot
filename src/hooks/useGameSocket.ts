@@ -17,9 +17,10 @@ const useGameSocket = () => {
     if (!socket) {
       // replace the URL w/ the deployed Web Sockets server
       // or use envi variable and make the URL dynamic
-      socket = io(`${process.env.NEXT_PUBLIC_WEB_SOCKET_URL}`, {
-        // path: "/api/socket",
-        path: "/socket",
+   // socket = io(`${process.env.NEXT_PUBLIC_WEB_SOCKET_URL}`, {
+     // path: "/socket",
+      socket = io({
+        path: "/api/socket",
         // transports: ['polling', 'websocket'],
       });
     }
