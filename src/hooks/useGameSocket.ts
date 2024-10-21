@@ -5,11 +5,11 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | undefined;
 
-const protocol = `wss`;
-const clientId = '1292011849470054471';
-const proxyDomain = 'discordsays.com';
-const resourcePath = '/api/socket';
-const url = new URL(`${protocol}://${clientId}.${proxyDomain}/.proxy${resourcePath}`);
+// const protocol = `wss`;
+// const clientId = '1292011849470054471';
+// const proxyDomain = 'discordsays.com';
+// const resourcePath = '/api/socket';
+// const url = new URL(`${protocol}://${clientId}.${proxyDomain}/.proxy${resourcePath}`);
 
 
 const useGameSocket = () => {
