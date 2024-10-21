@@ -5,12 +5,13 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | undefined;
 
-const protocol = `https`;
-const clientId = '1292011849470054471';
-const proxyDomain = 'discordsays.com';
-const resourcePath = '/api/socket';
-const url = new URL(`${protocol}://${clientId}.${proxyDomain}/.proxy${resourcePath}`);
-
+// const protocol = `https`;
+// const clientId = "1292011849470054471";
+// const proxyDomain = "discordsays.com";
+// const resourcePath = "/api/socket";
+// const url = new URL(
+//   `${protocol}://${clientId}.${proxyDomain}/.proxy${resourcePath}`
+// );
 
 const useGameSocket = () => {
   const [gameCode, setGameCode] = useState<string | null>(null);
@@ -24,10 +25,10 @@ const useGameSocket = () => {
     if (!socket) {
       // replace the URL w/ the deployed Web Sockets server
       // or use envi variable and make the URL dynamic
-   // socket = io(`${process.env.NEXT_PUBLIC_WEB_SOCKET_URL}`, {
-     // path: "/socket",
-      socket = io(`${url}`, {
-   // socket = io({
+      // socket = io(`${process.env.NEXT_PUBLIC_WEB_SOCKET_URL}`, {
+      // path: "/socket",
+      // socket = io(`${url}`, {
+      socket = io({
         path: "/api/socket",
         // transports: ['polling', 'websocket'],
       });
@@ -92,9 +93,9 @@ const useGameSocket = () => {
     if (socket) {
       setGameCode(null);
       setIsGameStarted(false);
-      socket.emit('leave', gameCode);
+      socket.emit("leave", gameCode);
     }
-  }
+  };
 
   const disconnect = () => {
     if (socket) {
@@ -102,7 +103,7 @@ const useGameSocket = () => {
       setIsGameStarted(false);
       socket.disconnect();
     }
-  }
+  };
 
   return {
     gameCode,
