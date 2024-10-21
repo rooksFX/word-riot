@@ -5,6 +5,13 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | undefined;
 
+const protocol = `wss`;
+const clientId = '1292011849470054471';
+const proxyDomain = 'discordsays.com';
+const resourcePath = '/api/socket';
+const url = new URL(`${protocol}://${clientId}.${proxyDomain}/.proxy${resourcePath}`);
+
+
 const useGameSocket = () => {
   const [gameCode, setGameCode] = useState<string | null>(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -19,7 +26,7 @@ const useGameSocket = () => {
       // or use envi variable and make the URL dynamic
    // socket = io(`${process.env.NEXT_PUBLIC_WEB_SOCKET_URL}`, {
      // path: "/socket",
-      socket = io({
+      socket = io(`${url}`, {
         path: "/api/socket",
         // transports: ['polling', 'websocket'],
       });
