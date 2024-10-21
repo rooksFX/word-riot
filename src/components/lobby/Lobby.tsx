@@ -32,6 +32,7 @@ export const Lobby = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full p-4">
+      Version 0.0.1
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
           <button
