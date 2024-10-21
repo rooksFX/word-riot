@@ -1,3 +1,4 @@
+"use client";
 import { Lobby } from "@/components/lobby/Lobby";
 import { patchUrlMappings } from '@discord/embedded-app-sdk';
 import { useEffect } from "react";
